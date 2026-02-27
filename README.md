@@ -3,6 +3,9 @@
 Batch-detect and download files (PDF and common document types) from the current page.
 Works in Chrome and Firefox (MV3).
 
+## Install from Store
+- Firefox Add-ons (AMO): https://addons.mozilla.org/en-US/firefox/addon/zen-pdf-grabber/
+
 ## Features
 - Scan the active tab and detect downloadable files.
 - Select specific files or use **Select All**.
