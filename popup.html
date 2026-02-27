@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --bg: #f4f7ff;
+      --panel: #ffffff;
+      --panel-2: #f7f9ff;
+      --text: #0f172a;
+      --muted: #5f6b86;
+      --border: #d7dff0;
+      --accent: #1570ef;
+      --accent-dim: #105ec8;
+      --danger: #ff6b6b;
+      --shadow: 0 12px 30px rgba(36, 64, 138, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      width: 360px;
+      font-family: "Avenir Next", "Segoe UI", "Trebuchet MS", Arial, sans-serif;
+      padding: 12px;
+      background:
+        radial-gradient(130% 90% at 0% 0%, #e8efff 0%, rgba(232, 239, 255, 0) 55%),
+        linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
+      color: var(--text);
+      margin: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-subtitle {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 2px 10px;
+      gap: 8px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      text-transform: none;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .select-all {
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--muted);
+      font-weight: 600;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .header-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scan-btn {
+      width: auto;
+      min-width: 62px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: none;
+    }
+
+    #pdf-list {
+      max-height: 260px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      padding: 0;
+      list-style: none;
+      background: var(--panel);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .pdf-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pdf-item:last-child { border-bottom: none; }
+    .pdf-item:hover { background-color: var(--panel-2); }
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .filename {
+      flex: 1;
+      min-width: 0;
+      font-size: 12px;
+      color: #14203d;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+      cursor: default;
+    }
+
+    .pdf-logo {
+      margin-left: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #ffffff;
+      background: #f04f4f;
+      border-radius: 5px;
+      padding: 2px 6px;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(180deg, #2b84ff 0%, var(--accent) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 10px 20px rgba(21, 112, 239, 0.25);
+    }
+
+    button:hover { background: linear-gradient(180deg, #1f79f8 0%, var(--accent-dim) 100%); }
+    button:disabled {
+      background: #d0d9eb;
+      color: #7f8aa5;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .secondary-btn {
+      background: #ffffff;
+      color: var(--accent);
+      border: 1px solid #bad3ff;
+      box-shadow: 0 6px 14px rgba(21, 112, 239, 0.12);
+    }
+
+    .secondary-btn:hover {
+      background: #f2f7ff;
+      border-color: #99beff;
+    }
+
+    .secondary-btn:disabled {
+      background: #eef2fa;
+      color: #7f8aa5;
+      border-color: #d6dfef;
+      box-shadow: none;
+    }
+
+    .action-btn {
+      font-size: 12px;
+      padding: 10px 6px;
+      line-height: 1.1;
+      min-height: 42px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; font-weight: 600; }
+
+    .error { color: var(--danger); }
+
+  </style>
+</head>
+<body>
+  <div class="brand">
+    <img class="brand-icon" src="icon.png" alt="Zen PDF Grabber icon">
+    <div class="brand-copy">
+      <p class="brand-title">Zen PDF Grabber</p>
+      <p class="brand-subtitle">Grab and Download files from any page</p>
+    </div>
+  </div>
+
+  <div class="header">
+    <div>
+      <h2>Files found</h2>
+    </div>
+    <div class="header-tools">
+      <button id="scan-btn" class="scan-btn">Scan</button>
+      <label class="select-all">
+        <input type="checkbox" id="select-all"> Select All
+      </label>
+    </div>
+  </div>
+
+  <div id="pdf-list">Scanning...</div>
+
+  <div class="actions">
+    <button id="download-btn" class="action-btn" disabled>Download</button>
+    <button id="copy-urls-btn" class="secondary-btn action-btn" disabled>Copy URLs</button>
+  </div>
+  <div class="status" id="status-msg"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
