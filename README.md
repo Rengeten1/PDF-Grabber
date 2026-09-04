@@ -4,6 +4,8 @@ A simple browser extension to batch-detect and download files (PDFs, docs, sprea
 
 Works on Firefox, Zen Browser, and Chrome (MV3).
 
+![PDF Down Preview](docs/media/amo-screenshot-1.png)
+
 ## Install from Store
 
 - **Firefox Add-ons (AMO):** https://addons.mozilla.org/en-US/firefox/addon/pdf-down/
