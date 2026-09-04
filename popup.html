@@ -1,259 +1,529 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PDF Down</title>
   <style>
     :root {
-      --bg: #f4f7ff;
-      --panel: #ffffff;
-      --panel-2: #f7f9ff;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-hover: #f1f5f9;
+      --surface-active: #e2e8f0;
+      --border: #e2e8f0;
+      --border-subtle: #f1f5f9;
       --text: #0f172a;
-      --muted: #5f6b86;
-      --border: #d7dff0;
-      --accent: #1570ef;
-      --accent-dim: #105ec8;
-      --danger: #ff6b6b;
-      --shadow: 0 12px 30px rgba(36, 64, 138, 0.14);
+      --muted: #64748b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.08);
+      --badge-pdf-bg: rgba(239, 68, 68, 0.1);
+      --badge-pdf-text: #dc2626;
+      --badge-doc-bg: rgba(37, 99, 235, 0.1);
+      --badge-doc-text: #2563eb;
+      --badge-sheet-bg: rgba(16, 185, 129, 0.1);
+      --badge-sheet-text: #059669;
+      --badge-ppt-bg: rgba(249, 115, 22, 0.1);
+      --badge-ppt-text: #ea580c;
+      --badge-zip-bg: rgba(168, 85, 247, 0.1);
+      --badge-zip-text: #9333ea;
+      --badge-other-bg: #f1f5f9;
+      --badge-other-text: #64748b;
+      --radius-sm: 6px;
+      --radius-md: 9px;
+      --radius-lg: 12px;
     }
 
-    * { box-sizing: border-box; }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --surface: #161b22;
+        --surface-hover: #21262d;
+        --surface-active: #30363d;
+        --border: #30363d;
+        --border-subtle: #21262d;
+        --text: #f0f6fc;
+        --muted: #8b949e;
+        --accent: #388bfd;
+        --accent-hover: #58a6ff;
+        --accent-soft: rgba(56, 139, 253, 0.14);
+        --badge-pdf-bg: rgba(248, 113, 113, 0.15);
+        --badge-pdf-text: #f87171;
+        --badge-doc-bg: rgba(96, 165, 250, 0.15);
+        --badge-doc-text: #60a5fa;
+        --badge-sheet-bg: rgba(52, 211, 153, 0.15);
+        --badge-sheet-text: #34d399;
+        --badge-ppt-bg: rgba(251, 146, 60, 0.15);
+        --badge-ppt-text: #fb923c;
+        --badge-zip-bg: rgba(192, 132, 252, 0.15);
+        --badge-zip-text: #c084fc;
+        --badge-other-bg: #21262d;
+        --badge-other-text: #8b949e;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 360px;
+      height: 500px;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
 
     body {
-      width: 360px;
-      font-family: "Avenir Next", "Segoe UI", "Trebuchet MS", Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
       padding: 12px;
-      background:
-        radial-gradient(130% 90% at 0% 0%, #e8efff 0%, rgba(232, 239, 255, 0) 55%),
-        linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
-      color: var(--text);
-      margin: 0;
+      gap: 8px;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 30px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: var(--shadow);
+      gap: 7px;
+      min-width: 0;
     }
 
     .brand-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
+      width: 19px;
+      height: 19px;
+      border-radius: 5px;
       object-fit: cover;
       flex-shrink: 0;
     }
 
-    .brand-copy {
-      min-width: 0;
-    }
-
-    .brand-title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: 0.2px;
-    }
-
-    .brand-subtitle {
-      margin: 2px 0 0;
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 0 2px 10px;
-      gap: 8px;
-    }
-
-    h2 {
-      margin: 0;
+    .brand-name {
       font-size: 13px;
-      letter-spacing: 0.3px;
-      text-transform: none;
       font-weight: 700;
+      letter-spacing: -0.3px;
       color: var(--text);
     }
 
-    .select-all {
-      font-size: 12px;
-      cursor: pointer;
+    .host-pill {
+      font-size: 10px;
       color: var(--muted);
-      font-weight: 600;
-      user-select: none;
+      max-width: 145px;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1px 7px;
+      border-radius: 10px;
     }
 
-    .header-tools {
+    .top-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
     }
 
-    .scan-btn {
-      width: auto;
-      min-width: 62px;
-      padding: 7px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      box-shadow: none;
+    .icon-btn {
+      width: 26px;
+      height: 26px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 120ms, color 120ms;
     }
 
-    #pdf-list {
-      max-height: 260px;
-      overflow-y: auto;
+    .icon-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+
+    /* Search Bar */
+    .search-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 30px;
+      padding: 0 26px 0 28px;
+      background: var(--surface);
       border: 1px solid var(--border);
-      margin-bottom: 10px;
-      padding: 0;
-      list-style: none;
-      background: var(--panel);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
+      border-radius: var(--radius-md);
+      font-size: 11.5px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 140ms, box-shadow 140ms;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-soft);
+    }
+
+    .search-input::placeholder {
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 9px;
+      color: var(--muted);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 7px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      display: none;
+      padding: 2px;
+      border-radius: 4px;
+    }
+
+    .clear-search-btn.is-visible { display: flex; align-items: center; }
+
+    /* Category Filter Tabs */
+    .tabs-row {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 1px 0;
+    }
+    .tabs-row::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 120ms;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: var(--surface-hover);
+    }
+
+    .tab-btn.is-active {
+      color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .tab-count {
+      font-size: 9.5px;
+      opacity: 0.75;
+    }
+
+    /* Selection Bar */
+    .selection-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 1px 2px;
+    }
+
+    .select-all-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .select-all-label input {
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+      width: 14px;
+      height: 14px;
+    }
+
+    #selection-stats {
+      font-size: 10.5px;
+    }
+
+    /* Single-Line Clean File List */
+    #pdf-list {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 3px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    #pdf-list::-webkit-scrollbar { width: 4px; }
+    #pdf-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
     }
 
     .pdf-item {
       display: flex;
       align-items: center;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
+      gap: 8px;
+      padding: 0 8px;
+      height: 33px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      cursor: pointer;
+      transition: background 100ms;
     }
 
-    .pdf-item:last-child { border-bottom: none; }
-    .pdf-item:hover { background-color: var(--panel-2); }
+    .pdf-item:hover {
+      background: var(--surface-hover);
+    }
 
-    input[type="checkbox"] {
-      margin-right: 10px;
-      cursor: pointer;
+    .pdf-item.is-selected {
+      background: var(--accent-soft);
+    }
+
+    .pdf-checkbox {
+      width: 14px;
+      height: 14px;
+      margin: 0;
       accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
     .filename {
       flex: 1;
       min-width: 0;
-      font-size: 12px;
-      color: #14203d;
-      font-weight: 600;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 220px;
-      cursor: default;
+      line-height: 1.2;
     }
 
-    .pdf-logo {
-      margin-left: 8px;
-      font-size: 10px;
-      font-weight: 800;
-      color: #ffffff;
-      background: #f04f4f;
-      border-radius: 5px;
-      padding: 2px 6px;
-      letter-spacing: 0.3px;
+    /* Clean Colored Badges */
+    .type-badge {
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      background: var(--badge-other-bg);
+      color: var(--badge-other-text);
+      text-transform: uppercase;
       flex-shrink: 0;
     }
 
-    button {
+    .type-badge.type-pdf { background: var(--badge-pdf-bg); color: var(--badge-pdf-text); }
+    .type-badge.type-doc, .type-badge.type-docx { background: var(--badge-doc-bg); color: var(--badge-doc-text); }
+    .type-badge.type-xls, .type-badge.type-xlsx, .type-badge.type-csv { background: var(--badge-sheet-bg); color: var(--badge-sheet-text); }
+    .type-badge.type-ppt, .type-badge.type-pptx { background: var(--badge-ppt-bg); color: var(--badge-ppt-text); }
+    .type-badge.type-zip, .type-badge.type-rar, .type-badge.type-7z { background: var(--badge-zip-bg); color: var(--badge-zip-text); }
+
+    /* Single Full-Width Action Button */
+    .actions-bar {
+      display: flex;
+      align-items: center;
       width: 100%;
-      padding: 12px;
-      background: linear-gradient(180deg, #2b84ff 0%, var(--accent) 100%);
+    }
+
+    .download-btn {
+      width: 100%;
+      height: 36px;
+      background: var(--accent);
       color: #ffffff;
       border: none;
-      border-radius: 10px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      font-weight: 600;
       cursor: pointer;
-      font-weight: 800;
-      font-size: 13px;
-      letter-spacing: 0.3px;
-      box-shadow: 0 10px 20px rgba(21, 112, 239, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background 120ms, opacity 120ms;
     }
 
-    button:hover { background: linear-gradient(180deg, #1f79f8 0%, var(--accent-dim) 100%); }
-    button:disabled {
-      background: #d0d9eb;
-      color: #7f8aa5;
-      cursor: default;
-      box-shadow: none;
+    .download-btn:hover:not(:disabled) {
+      background: var(--accent-hover);
     }
 
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+    .download-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
-    .secondary-btn {
-      background: #ffffff;
-      color: var(--accent);
-      border: 1px solid #bad3ff;
-      box-shadow: 0 6px 14px rgba(21, 112, 239, 0.12);
+    /* Progress & Status */
+    .status-container {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
 
-    .secondary-btn:hover {
-      background: #f2f7ff;
-      border-color: #99beff;
+    .progress-bar-bg {
+      height: 2px;
+      width: 100%;
+      background: transparent;
+      border-radius: 2px;
+      overflow: hidden;
+      display: none;
     }
 
-    .secondary-btn:disabled {
-      background: #eef2fa;
-      color: #7f8aa5;
-      border-color: #d6dfef;
-      box-shadow: none;
+    .progress-bar-bg.is-active {
+      display: block;
+      background: var(--border);
     }
 
-    .action-btn {
-      font-size: 12px;
-      padding: 10px 6px;
-      line-height: 1.1;
-      min-height: 42px;
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 200ms ease;
+    }
+
+    .status {
+      min-height: 13px;
+      font-size: 10.5px;
+      color: var(--muted);
+      text-align: center;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .status { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; font-weight: 600; }
+    .status.success { color: #10b981; }
+    .status.error { color: #ef4444; }
 
-    .error { color: var(--danger); }
-
+    /* Minimal Empty State */
+    .empty-notice {
+      margin: auto;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.6;
+    }
   </style>
 </head>
 <body>
-  <div class="brand">
-    <img class="brand-icon" src="icon.png" alt="Zen PDF Grabber icon">
-    <div class="brand-copy">
-      <p class="brand-title">Zen PDF Grabber</p>
-      <p class="brand-subtitle">Grab and Download files from any page</p>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="brand">
+      <img src="icons/icon-48.png" alt="PDF Down" class="brand-icon">
+      <span class="brand-name">PDF Down</span>
+      <span class="host-pill" id="page-host-subtitle"></span>
+    </div>
+    <div class="top-actions">
+      <button id="scan-btn" class="icon-btn" title="Rescan page">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
     </div>
   </div>
 
-  <div class="header">
-    <div>
-      <h2>Files found</h2>
-    </div>
-    <div class="header-tools">
-      <button id="scan-btn" class="scan-btn">Scan</button>
-      <label class="select-all">
-        <input type="checkbox" id="select-all"> Select All
-      </label>
-    </div>
+  <!-- Search Input -->
+  <div class="search-row">
+    <span class="search-icon">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </span>
+    <input type="search" id="search-input" class="search-input" placeholder="Search files..." autocomplete="off">
+    <button type="button" id="clear-search-btn" class="clear-search-btn" title="Clear">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
   </div>
 
-  <div id="pdf-list">Scanning...</div>
-
-  <div class="actions">
-    <button id="download-btn" class="action-btn" disabled>Download</button>
-    <button id="copy-urls-btn" class="secondary-btn action-btn" disabled>Copy URLs</button>
+  <!-- Category Filter Tabs -->
+  <div class="tabs-row" id="category-pills">
+    <button type="button" class="tab-btn is-active" data-cat="all">
+      All <span class="tab-count" id="count-all"></span>
+    </button>
+    <button type="button" class="tab-btn" data-cat="pdf">
+      PDF <span class="tab-count" id="count-pdf"></span>
+    </button>
+    <button type="button" class="tab-btn" data-cat="docs">
+      Docs <span class="tab-count" id="count-docs"></span>
+    </button>
+    <button type="button" class="tab-btn" data-cat="sheets">
+      Sheets <span class="tab-count" id="count-sheets"></span>
+    </button>
+    <button type="button" class="tab-btn" data-cat="archives">
+      Zip <span class="tab-count" id="count-archives"></span>
+    </button>
   </div>
-  <div class="status" id="status-msg"></div>
+
+  <!-- Selection Bar -->
+  <div class="selection-bar" id="list-header">
+    <label class="select-all-label">
+      <input type="checkbox" id="select-all">
+      <span>Select all</span>
+    </label>
+    <span id="selection-stats">0 selected</span>
+  </div>
+
+  <!-- Single-Line Clean Document List -->
+  <div id="pdf-list"></div>
+
+  <!-- Single Full-Width Action Button -->
+  <div class="actions-bar">
+    <button id="download-btn" class="download-btn" disabled>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      <span>Download</span> <span id="download-count-badge"></span>
+    </button>
+  </div>
+
+  <!-- Progress & Status -->
+  <div class="status-container">
+    <div class="progress-bar-bg" id="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-bar-fill"></div>
+    </div>
+    <div class="status" id="status-msg"></div>
+  </div>
 
   <script src="popup.js"></script>
 </body>
